@@ -1,6 +1,5 @@
-import React from "react";
+import React from 'react';
 
-// Only re-renders when todos prop changes!
 const TodoList = React.memo(function TodoList({ todos }) {
   return (
     <ul data-cy="todo-list">
