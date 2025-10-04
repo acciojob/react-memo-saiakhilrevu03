@@ -1,9 +1,8 @@
-import React, { useMemo } from "react";
+import React, { useMemo } from 'react';
 
 function UseMemo({ counter }) {
-  // Expensive calculation - just to demo useMemo
+  // Simulate an expensive calculation
   const doubleCounter = useMemo(() => {
-    // Let's pretend this is expensive
     let result = counter;
     for (let i = 0; i < 10000000; i++) {
       result = result;
