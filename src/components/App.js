@@ -1,73 +1,65 @@
-import React, { useState, useCallback } from "react";
-import UseMemo from "./UseMemo";
-import ReactMemo from "./ReactMemo";
+import React, { useState, useEffect, useMemo } from 'react';
+import ReactMemo from './ReactMemo';
+import UseMemo from './UseMemo';
 
 function App() {
-  const [todos, setTodos] = useState(["Sample todo"]);
+  const [todos, setTodos] = useState(['Sample Task']);
+  const [taskInput, setTaskInput] = useState('');
   const [counter, setCounter] = useState(0);
-  const [customInput, setCustomInput] = useState("");
-  const [inputError, setInputError] = useState("");
+  const [customTask, setCustomTask] = useState('');
 
+  // Optimized calculation (simulate expensive)
+  const expensiveCalculation = useMemo(() => {
+    let sum = 0;
+    for (let i = 0; i < 10000000; i++) {
+      sum += i;
+    }
+    return sum;
+  }, []);
+
+  // Add default "New todo"
   const handleAddTodo = () => {
-    setTodos((prev) => [...prev, "New todo"]);
+    setTodos([...todos, 'New todo']);
   };
 
-  const handleInputChange = (e) => {
-    setCustomInput(e.target.value);
-    if (e.target.value.length <= 5) {
-      setInputError("Task must be more than 5 characters");
+  // Increment counter
+  const handleIncrement = () => {
+    setCounter(prev => prev + 1);
+  };
+
+  // Validate custom task
+  const handleAddCustomTask = () => {
+    if (customTask.length > 5) {
+      setTodos([...todos, customTask]);
+      setCustomTask('');
     } else {
-      setInputError("");
+      alert('Task must be more than 5 characters');
     }
   };
-
-  const handleAddCustomTodo = () => {
-    if (customInput.length > 5) {
-      setTodos((prev) => [...prev, customInput]);
-      setCustomInput("");
-      setInputError("");
-    } else {
-      setInputError("Task must be more than 5 characters");
-    }
-  };
-
-  const handleIncrement = () => setCounter((c) => c + 1);
-
-  // Only create this memoized callback once
-  const memoizedIncrement = useCallback(handleIncrement, []);
 
   return (
-    <div style={{ padding: 30, maxWidth: 500 }}>
-      <h2>Task Management App</h2>
+    <div>
+      <h1>Task Management App</h1>
 
+      <button data-cy="add-todo" onClick={handleAddTodo}>Add Todo</button>
+
+      {/* To-Do List, memoized */}
       <ReactMemo todos={todos} />
-      <button onClick={handleAddTodo} data-cy="add-todo">Add Todo</button>
 
-      <div style={{ marginTop: 20 }}>
-        <input
-          type="text"
-          value={customInput}
-          onChange={handleInputChange}
-          placeholder="Custom task"
-          data-cy="memo-input"
-        />
-        <button
-          onClick={handleAddCustomTodo}
-          disabled={customInput.length <= 5}
-          data-cy="submit-custom"
-        >
-          Submit
-        </button>
-        {inputError && <div style={{ color: "red" }}>{inputError}</div>}
-      </div>
-
-      <hr />
-
+      {/* Counter with button */}
       <UseMemo counter={counter} />
+      <button data-cy="increment-btn" onClick={handleIncrement}>Increment</button>
 
-      <button onClick={memoizedIncrement} data-cy="increment">
-        Increment Counter
-      </button>
+      {/* Memoized input for custom task */}
+      <div>
+        <input
+          className="task-input"
+          placeholder="Enter task > 5 characters"
+          value={customTask}
+          onChange={(e) => setCustomTask(e.target.value)}
+        />
+        <button data-cy="add-task-btn" onClick={handleAddCustomTask}>Add Task</button>
+      </div>
     </div>
   );
 }
